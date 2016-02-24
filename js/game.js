@@ -14,6 +14,9 @@ function PlayGround(selector_ch1)
 			else if(e.keyCode == 37) {
 				ch1.updateAction("WALK_LEFT");
 			}
+			else if(e.keyCode == 38) {
+				ch1.updateAction("JUMP");
+			}
 			else if(e.keyCode == 40) {
 				ch1.updateAction("KNEEL");
 			}
@@ -53,17 +56,19 @@ function Character(selector)
 		'KICK': 		{ 'y': 6, 'x': [0, 1, 2, 3, 4] },
 		'PUNCH': 		{ 'y': 2, 'x': [0, 1, 2] },
 		'BEAM': 		{ 'y': 0, 'x': [0, 1, 2, 3] },
-		'ROUND_HOUSE': 	{ 'y': 7, 'x': [0, 1, 2, 3, 4]}
+		'ROUND_HOUSE': 	{ 'y': 7, 'x': [0, 1, 2, 3, 4] },
+		'JUMP': 		{ 'y': 8, 'x': [0, 1, 2, 3, 4, 5, 6] }
 	}
 	var counter = 0;			//stores which sprite (in the x-direction) it should display 
 	this.action = "STANDING";	//default action is for the character to stand
 	this.ch_x=0;					//x_coordinate of the character
-	this.ch_y=0;					//y_coordinate of the character
+	this.ch_y=140;					//y_coordinate of the character
 	//ch_x, ch_y and action could really all be private variables and I could have just done var instead of this. but to make debuggin easier, I am making them an instance variable so that it would display when you log the chracter object
+	this.jumpCounter = 0;
 
 	this.drawSprite = function(y, x)
 	{
-		$('#'+selector).css('background', "url('images/ken.png') "+x*(-70)+"px "+(-80*y)+"px").css('left', this.ch_x+"px");
+		$('#'+selector).css('background', "url('images/ken.png') "+x*(-70)+"px "+(-80*y)+"px").css('left', this.ch_x+"px").css('top', this.ch_y+"px");
 	}
 
 	//updates the action
@@ -82,10 +87,29 @@ function Character(selector)
 			this.action = 'STANDING';
 		}
 
-		if(this.action == 'WALK_LEFT')
+		if(this.action == 'WALK_LEFT') {
 			this.ch_x = this.ch_x-10;
-		else if(this.action == 'WALK_RIGHT')
+			// console.log(this.ch_x);
+		}
+		else if(this.action == 'WALK_RIGHT') {
 			this.ch_x = this.ch_x+10;
+			// console.log(this.ch_x);
+		}
+
+		if(this.action == 'JUMP') {
+			if (this.jumpCounter > 0 && this.jumpCounter < 3) {
+				this.ch_y -= 30;
+			} 
+			if (this.jumpCounter > 3 && this.jumpCounter < 6) {
+				this.ch_y += 30;
+			}
+			// No change in y is this.jumpCounter == 0, 3, or 6
+			this.jumpCounter++;
+			if (this.jumpCounter == 7) {
+				this.jumpCounter = 0;
+			}
+			// console.log(this.ch_y, this.jumpCounter);
+		}
 	}
 
 	//draws the character on the screen
